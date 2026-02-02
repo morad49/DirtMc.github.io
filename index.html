@@ -2,90 +2,124 @@
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DirtMC</title>
-
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Arial;
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
 }
 
-body{
-  height:100vh;
-  background:url("assets/bg.jpg") center/cover no-repeat;
-  display:flex;
-  justify-content:center;
-  align-items:center;
+/* الخلفية */
+body {
+  height: 100vh;
+  background: #0b3d0b;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: white;
+  text-align: center;
+  position: relative;
 }
 
-/* blur layer */
-.blur{
-  position:absolute;
-  inset:0;
-  backdrop-filter:blur(8px);
-  background:rgba(0,0,0,0.4);
+/* النقاط الخضراء العائمة */
+body::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background-image: radial-gradient(circle, rgba(100,255,100,0.3) 1px, transparent 1px);
+  background-size: 30px 30px;
+  animation: moveDots 15s linear infinite;
+  z-index: 0;
 }
 
-/* content */
-.container{
-  position:relative;
-  text-align:center;
-  color:white;
+@keyframes moveDots {
+  0% { transform: translate(0,0); }
+  100% { transform: translate(-50%, -50%); }
 }
 
-/* logo */
-.logo{
-  width:220px;
-  margin-bottom:30px;
-  animation:float 4s ease-in-out infinite;
+/* المحتوى */
+.container {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* buttons */
-.buttons{
-  display:flex;
-  gap:20px;
-  justify-content:center;
+/* اسم السيرفر */
+h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  background: linear-gradient(90deg, #6ee7b7, #22c55e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 15px;
 }
 
-.btn{
-  width:70px;
-  height:70px;
-  border-radius:50%;
-  background:#22c55e;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:28px;
-  text-decoration:none;
-  color:white;
-  box-shadow:0 10px 20px rgba(0,0,0,0.5);
-  animation:float 3s ease-in-out infinite;
+/* IP info */
+p.ip {
+  font-size: 1.2rem;
+  background: linear-gradient(90deg, #a7f3d0, #22c55e);
+  padding: 8px 16px;
+  border-radius: 12px;
+  margin-bottom: 25px;
 }
 
-.btn:hover{
-  transform:scale(1.15);
+/* الأزرار */
+.buttons {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
-@keyframes float{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-12px)}
+.btn {
+  background: linear-gradient(90deg, #4ade80, #16a34a);
+  color: white;
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+  min-width: 120px;
+}
+
+.btn:hover,
+.btn:active {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+}
+
+/* أي فون / أندرويد لمس */
+.btn:active {
+  transform: translateY(-4px);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  h1 { font-size: 2.2rem; }
+  p.ip { font-size: 1rem; padding: 6px 12px; }
+  .btn { font-size: 0.9rem; padding: 12px 22px; min-width: 100px; }
 }
 </style>
 </head>
-
 <body>
 
-<div class="blur"></div>
-
 <div class="container">
-  <img src="assets/logo.png" class="logo">
+  <h1>DirtMc</h1>
+  <p class="ip">ɪᴘ: ᴅɪʀᴛᴍᴄ.ᴘʀᴏ &nbsp; ᴘᴏʀᴛ: 21411</p>
 
   <div class="buttons">
-    <a class="btn" href="#">🌐</a>
-    <a class="btn" href="#">💬</a>
-    <a class="btn" href="#">🎮</a>
+    <a class="btn" href="https://discord.gg/dirtmc" target="_blank">Discord</a>
+    <a class="btn" href="https://www.tiktok.com/@dirtmc_?_r=1&_t=ZS-93afGsWFEpu" target="_blank">TikTok</a>
   </div>
 </div>
 
