@@ -12,16 +12,32 @@ body {
   background:#0b3d0b;
   overflow:hidden;
   display:flex;
-  justify-content:center;
-  align-items:center;
   flex-direction:column;
+  justify-content:flex-start;
+  align-items:center;
   color:white;
   text-align:center;
   position:relative;
 }
 
-.container { position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; }
+/* Container */
+.container { position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; margin-top:30px; }
 
+/* Floating DirtMc animation */
+#floatingDirtMc {
+  position:absolute;
+  font-size:2.5rem;
+  font-weight:bold;
+  z-index:2;
+  pointer-events:none;
+  background: linear-gradient(90deg,#22c55e,#6ee7b7,#16a34a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  opacity:0;
+  transition: all 1s ease-in-out;
+}
+
+/* Server name */
 h1 {
   font-size:3rem;
   font-weight:bold;
@@ -31,6 +47,7 @@ h1 {
   margin-bottom: 10px;
 }
 
+/* IP info */
 p.ip {
   font-size:1.2rem;
   background: linear-gradient(90deg, #a7f3d0, #22c55e);
@@ -39,17 +56,19 @@ p.ip {
   margin-bottom:20px;
 }
 
+/* Description */
 p.desc {
   font-size:1rem;
-  max-width:280px;
+  max-width:320px;
   background: rgba(0,0,0,0.3);
-  padding:10px 16px;
-  border-radius:10px;
-  margin-top:10px;
+  padding:12px 16px;
+  border-radius:12px;
+  margin-bottom:20px;
   line-height:1.4;
 }
 
-.buttons { display:flex; gap:20px; flex-wrap:wrap; justify-content:center; margin-bottom:15px; }
+/* Buttons */
+.buttons { display:flex; gap:20px; flex-wrap:wrap; justify-content:center; margin-bottom:20px; }
 
 .btn {
   background: linear-gradient(90deg, #4ade80, #16a34a);
@@ -63,104 +82,114 @@ p.desc {
   min-width:120px;
 }
 
-.btn:hover,
-.btn:active { transform: translateY(-8px); box-shadow:0 10px 20px rgba(0,0,0,0.5); }
+.btn:hover { transform: translateY(-8px); box-shadow:0 10px 20px rgba(0,0,0,0.5); }
 
-@media(max-width:600px){
-  h1{font-size:2.2rem;}
-  p.ip{font-size:1rem;padding:6px 12px;}
-  p.desc{font-size:0.9rem; max-width:200px;}
-  .btn{font-size:0.9rem;padding:12px 20px;min-width:100px;}
-}
-
-/* Name Prompt */
-#namePrompt {
+/* Footer Tabs */
+#tabs {
   position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.8);
+  bottom:0;
+  width:100%;
   display:flex;
   justify-content:center;
-  align-items:center;
-  z-index:100;
+  gap:20px;
+  padding:10px 0;
+  background: rgba(0,0,0,0.6);
+  z-index:5;
+}
+
+.tab {
+  background: linear-gradient(90deg,#22c55e,#6ee7b7);
+  padding:10px 20px;
+  border-radius:12px;
+  cursor:pointer;
+  transition: all 0.3s ease;
+  display:flex;
   flex-direction:column;
-  gap:12px;
+  align-items:center;
   color:white;
 }
 
-#namePrompt input { padding:8px 12px; border-radius:8px; border:none; font-size:1rem; }
-#namePrompt button { padding:8px 16px; border-radius:8px; border:none; background:#16a34a; color:white; font-weight:bold; cursor:pointer; }
-#namePrompt button:hover { background:#22c55e; }
+.tab:hover { transform: translateY(-5px); box-shadow:0 6px 15px rgba(0,0,0,0.5); }
 
-#sport { display:none; margin-top:15px; padding:10px 20px; background:linear-gradient(90deg,#facc15,#fbbf24); border-radius:12px; }
+/* Phases */
+.phase { font-size:0.85rem; margin-top:6px; }
 
-#chatSection { display:none; flex-direction:column; align-items:center; margin-top:20px; }
-#chatLog { background: rgba(0,0,0,0.3); padding:10px; border-radius:10px; width:90%; max-width:320px; height:150px; overflow-y:auto; margin-bottom:10px; }
-#chatInput { padding:6px 10px; border-radius:8px; border:none; width:70%; max-width:250px; }
-#chatBtn { padding:6px 12px; border-radius:8px; border:none; background:#16a34a; color:white; cursor:pointer; margin-left:5px; }
-#chatBtn:hover { background:#22c55e; }
+.phase span { display:block; margin:2px 0; }
+
+/* Responsive */
+@media(max-width:600px){
+  h1{font-size:2.2rem;}
+  p.ip{font-size:1rem;padding:6px 12px;}
+  p.desc{font-size:0.9rem; max-width:240px;}
+  .btn{font-size:0.9rem;padding:12px 20px;min-width:100px;}
+  #tabs { flex-direction:column; gap:10px; }
+}
 </style>
 </head>
 <body>
 
-<div id="namePrompt">
-  <p>Enter your Minecraft name:</p>
-  <input type="text" id="playerName" placeholder="Your name...">
-  <button onclick="enterSite()">Enter</button>
-</div>
+<div id="floatingDirtMc">DirtMc ✨💚</div>
 
-<div class="container" style="display:none;">
+<div class="container">
   <h1>DirtMc</h1>
   <p class="ip">IP: dirtmc.pro &nbsp; PORT: 21411</p>
 
   <div class="buttons">
-    <a class="btn" href="https://discord.gg/dirtmc" target="_blank">Discord</a>
-    <a class="btn" href="https://www.tiktok.com/@dirtmc_?_r=1&_t=ZS-93afGsWFEpu" target="_blank">TikTok</a>
+    <a class="btn" href="https://discord.gg/dirtmc" target="_blank">Discord 💬</a>
+    <a class="btn" href="https://www.tiktok.com/@dirtmc_?_r=1&_t=ZS-93afGsWFEpu" target="_blank">TikTok 🎵</a>
   </div>
 
   <p class="desc">
-    Best Minecraft server for all ages! 🟢
-    Enjoy adventures, challenges, and fun with players worldwide!
+    Best Minecraft server for all ages! 🟢<br>
+    Enjoy adventures, challenges, and fun with players worldwide! 🌎⛏️
   </p>
+</div>
 
-  <div id="sport">Sport Section (Admin Only)</div>
-
-  <div id="chatSection">
-    <p>Chat with players:</p>
-    <div id="chatLog"></div>
-    <input type="text" id="chatInput" placeholder="Type your message...">
-    <button id="chatBtn">Send</button>
+<!-- Footer Tabs -->
+<div id="tabs">
+  <div class="tab" id="javaTab">
+    🖥️ Java Edition
+    <div class="phase">
+      <span>QuickBox ⛏️ - under development</span>
+      <span>BoxPvP ⚔️ - Soon</span>
+      <span>SMP 🌎 - Soon</span>
+    </div>
+  </div>
+  <div class="tab" id="bedrockTab">
+    📱 Bedrock Edition
+    <div class="phase">
+      <span>QuickBox ⛏️ - under development</span>
+      <span>BoxPvP ⚔️ - Soon</span>
+      <span>SMP 🌎 - Soon</span>
+    </div>
   </div>
 </div>
 
 <script>
-let isAdmin = false; // set true to test admin section
-function enterSite(){
-  const name = document.getElementById('playerName').value.trim();
-  if(name===''){ alert("You must enter your Minecraft name!"); return; }
-  document.getElementById('namePrompt').style.display='none';
-  document.querySelector('.container').style.display='flex';
-  if(isAdmin) document.getElementById('sport').style.display='block';
-  document.getElementById('chatSection').style.display='flex';
+// Floating DirtMc rare animation
+const floating = document.getElementById('floatingDirtMc');
+function showFloatingDirtMc(){
+  const x = Math.random()*80+10; // % from left
+  const y = Math.random()*50+10; // % from top
+  floating.style.left = x+'vw';
+  floating.style.top = y+'vh';
+  floating.style.opacity = 1;
+  floating.style.transform = 'scale(1.5)';
+  setTimeout(()=>{
+    floating.style.opacity = 0;
+    floating.style.transform = 'scale(1)';
+  },2500);
 }
+// random trigger every 5-12 sec
+setInterval(()=>{ if(Math.random()>0.5) showFloatingDirtMc(); },5000+Math.random()*7000);
 
-// Chat local
-const chatLog = document.getElementById('chatLog');
-document.getElementById('chatBtn').onclick = () => {
-  const input = document.getElementById('chatInput');
-  if(input.value.trim()==='') return;
-  const msg = document.createElement('p');
-  msg.textContent = document.getElementById('playerName').value + ": " + input.value;
-  chatLog.appendChild(msg);
-  chatLog.scrollTop = chatLog.scrollHeight;
-  input.value='';
-}
-
-// Particles random movement
+// Advanced particles
 const total = 80;
 for(let i=0;i<total;i++){
   const p = document.createElement('div');
-  p.style.width = (Math.random()*6+3)+'px';
-  p.style.height = p.style.width;
+  const size = Math.random()*6+3;
+  p.style.width = size+'px';
+  p.style.height = size+'px';
   p.style.borderRadius='50%';
   const g = Math.floor(Math.random()*155 + 50);
   const r = Math.floor(Math.random()*50);
@@ -171,12 +200,10 @@ for(let i=0;i<total;i++){
   p.style.top = Math.random()*100+'vh';
   document.body.appendChild(p);
 
-  // random movement
   const speed = Math.random()*0.3+0.1;
-  const angle = Math.random()*Math.PI*2;
   function move(){
-    let x = parseFloat(p.style.left) + Math.cos(angle+Math.random()*0.5-0.25)*speed;
-    let y = parseFloat(p.style.top) + Math.sin(angle+Math.random()*0.5-0.25)*speed;
+    let x = parseFloat(p.style.left) + (Math.random()*2-1)*speed;
+    let y = parseFloat(p.style.top) + (Math.random()*2-1)*speed;
     if(x>100)x=0; if(x<0)x=100;
     if(y>100)y=0; if(y<0)y=100;
     p.style.left=x+'vw';
