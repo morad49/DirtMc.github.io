@@ -1,185 +1,281 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>DirtMC Server</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DirtMC</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
 
 <style>
-:root{
-  --bg-1: #061d07;
-  --bg-2: #08300a;
-  --accent-1: #16a34a;
-  --accent-2: #6ee7b7;
+body{
+margin:0;
+font-family:Inter;
+background:black;
+overflow:hidden;
+color:white;
+cursor:none;
 }
 
-*{box-sizing:border-box}
-html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;color:#e9fff0;overflow-x:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
-body{background:linear-gradient(180deg,var(--bg-1) 0%,var(--bg-2) 100%);}
-
-#bgCanvas{
-  position:fixed; inset:0; z-index:0; display:block;
+/* cinematic loading */
+#loading{
+position:fixed;
+inset:0;
+background:black;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:65px;
+font-weight:900;
+background:linear-gradient(90deg,#00ff88,#66ffcc);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+animation:zoomFade 3s forwards 2s;
+z-index:9999;
 }
 
-.wrap{
-  position:relative; z-index:2; min-height:100vh;
-  display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
-  padding:48px 20px 120px; gap:28px;
+@keyframes zoomFade{
+to{transform:scale(3);opacity:0;visibility:hidden;}
 }
 
-.hero{
-  width:100%; max-width:1100px;
-  display:flex; gap:28px; align-items:center; justify-content:space-between;
+canvas{
+position:fixed;
+inset:0;
+z-index:-1;
 }
 
-.hero-left{
-  flex:1 1 560px; padding:28px;
-  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.6);
-  backdrop-filter: blur(6px);
+/* UI */
+.container{
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+gap:25px;
 }
 
-.tag{
-  display:inline-flex; align-items:center; gap:10px; padding:6px 10px;
-  border-radius:999px; font-weight:600; background: linear-gradient(90deg,var(--accent-2),var(--accent-1));
-  color:#051806; width:max-content; margin-bottom:14px; box-shadow:0 6px 18px rgba(22,163,74,0.12);
+.title{
+font-size:75px;
+font-weight:900;
+background:linear-gradient(90deg,#00ff88,#66ffcc);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+text-shadow:0 0 30px #00ff88;
+animation:float 4s infinite ease-in-out;
 }
 
-h1{
-  margin:6px 0 8px 0; font-size:40px; line-height:1.02; letter-spacing:-0.02em;
-  background: linear-gradient(90deg,var(--accent-2),var(--accent-1));
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-  font-weight:800;
+@keyframes float{
+0%,100%{transform:translateY(0)}
+50%{transform:translateY(-12px)}
 }
 
-.subtitle{
-  color:#a7f3d0; font-size:16px; max-width:720px; margin-bottom:18px;
+.ipBtn{
+padding:20px 36px;
+font-size:24px;
+border:none;
+border-radius:16px;
+cursor:pointer;
+font-weight:800;
+background:linear-gradient(90deg,#00ff88,#66ffcc);
+box-shadow:0 0 40px #00ff88aa;
+transition:.3s;
 }
 
-.actions{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
-
-.btn{
-  display:inline-flex; align-items:center; gap:10px; padding:12px 16px;
-  border-radius:12px; cursor:pointer; border:0; font-weight:700; text-decoration:none;
-  box-shadow:0 10px 24px rgba(0,0,0,0.45);
-  transition: transform .18s ease, box-shadow .18s ease;
-}
-.btn:active{ transform: translateY(-2px); }
-
-.btn-join{
-  background: linear-gradient(90deg,var(--accent-1),var(--accent-2));
-  color:#041205; font-size:16px;
+.ipBtn:hover{
+transform:scale(1.15);
+box-shadow:0 0 80px #00ff88;
 }
 
-.socials{ display:flex; gap:10px; margin-left:6px; }
-
-.social{
-  display:inline-flex; align-items:center; gap:8px; padding:8px 10px; border-radius:10px;
-  background:rgba(255,255,255,0.04); color:#a7f3d0; font-weight:600; text-decoration:none;
-  transition:transform .14s ease, box-shadow .14s ease;
+/* saturn */
+#saturn{
+position:fixed;
+width:40px;
+pointer-events:none;
+filter:drop-shadow(0 0 10px #00ff88);
+z-index:9999;
 }
-.social:hover{ transform: translateY(-6px); box-shadow:0 12px 30px rgba(0,0,0,0.45); }
+
 </style>
 </head>
 <body>
 
-<canvas id="bgCanvas"></canvas>
+<div id="loading">DirtMC</div>
 
-<div class="wrap">
-  <div class="hero" role="banner">
-    <div class="hero-left" aria-labelledby="heroTitle">
-      <div class="tag">✨ DirtMC • Premium</div>
-      <h1 id="heroTitle">DirtMC — Minecraft</h1>
-      <p class="subtitle">Fast, friendly and stable server — PvP arenas, fast minigames, custom items and weekly events. Join now and meet players from all over the world!</p>
+<canvas id="bg"></canvas>
 
-      <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-        <div class="actions">
-          <button class="btn btn-join" id="joinBtn">▶ dirtmc.pro:21411</button>
-        </div>
-        <div class="socials" style="margin-left:8px;">
-          <a class="social" href="https://discord.gg/dirtmc" target="_blank" rel="noopener">💬 Discord</a>
-          <a class="social" href="https://www.tiktok.com/@dirtmc_?_r=1&_t=ZS-93afGsWFEpu" target="_blank" rel="noopener">🎵 TikTok</a>
-        </div>
-      </div>
-    </div>
-  </div>
+<img id="saturn" src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Saturn_during_Equinox.jpg">
+
+<div class="container">
+<div class="title">DirtMC</div>
+<button class="ipBtn" id="copyBtn">dirtmc.pro:21411</button>
 </div>
 
+<audio id="spaceAudio" autoplay loop>
+<source src="https://cdn.pixabay.com/audio/2023/03/07/audio_3b8e9b46c4.mp3">
+</audio>
+
 <script>
-/* Join button copy IP */
-const joinBtn = document.getElementById('joinBtn');
-joinBtn.addEventListener('click', ()=>{
-  joinBtn.textContent = '✔ Copied & Ready';
-  setTimeout(()=> joinBtn.textContent = '▶ dirtmc.pro:21411', 1400);
-  navigator.clipboard.writeText('dirtmc.pro:21411').catch(()=>{});
-});
 
-/* Green Black Hole Background */
-(function(){
-  const canvas = document.getElementById('bgCanvas');
-  const ctx = canvas.getContext('2d');
-  let W = window.innerWidth;
-  let H = window.innerHeight;
-  canvas.width = W;
-  canvas.height = H;
+/* copy ip + sound */
+const btn=document.getElementById("copyBtn")
+const clickSound=new Audio("https://cdn.pixabay.com/audio/2022/03/15/audio_5aa3a8b3c4.mp3")
 
-  window.addEventListener('resize',()=>{
-    W = window.innerWidth;
-    H = window.innerHeight;
-    canvas.width = W;
-    canvas.height = H;
-  });
+btn.onclick=()=>{
+navigator.clipboard.writeText("dirtmc.pro:21411")
+btn.innerText="✔ Copied"
+clickSound.play()
+setTimeout(()=>btn.innerText="dirtmc.pro:21411",1500)
+}
 
-  const particles = [];
-  const numParticles = 350;
-  for(let i=0;i<numParticles;i++){
-    particles.push({
-      angle: Math.random()*Math.PI*2,
-      radius: Math.random()*Math.min(W,H)*0.45,
-      speed: 0.002 + Math.random()*0.002,
-      size: 1+Math.random()*2
-    });
-  }
+/* saturn orbit + trail */
+const saturn=document.getElementById("saturn")
+let mx=0,my=0,trail=[]
+let angle=0
 
-  const mouse = {x: W/2, y: H/2};
-  window.addEventListener('mousemove', e=>{ mouse.x = e.clientX; mouse.y = e.clientY; });
+window.addEventListener("mousemove",e=>{
+mx=e.clientX
+my=e.clientY
+trail.push({x:mx,y:my,life:25})
+})
 
-  function center(){ return {x: W/2, y: H/2}; }
+function saturnLoop(){
+angle+=0.05
+let radius=35
 
-  function draw(){
-    ctx.fillStyle = 'rgba(0,0,0,0.18)';
-    ctx.fillRect(0,0,W,H);
+saturn.style.left=mx+Math.cos(angle)*radius+"px"
+saturn.style.top=my+Math.sin(angle)*radius+"px"
 
-    const c = center();
-    particles.forEach(p=>{
-      p.angle += p.speed;
-      p.radius *= 0.996;
-      if(p.radius<10) p.radius = Math.random()*Math.min(W,H)*0.45;
+requestAnimationFrame(saturnLoop)
+}
+saturnLoop()
 
-      const x = c.x + Math.cos(p.angle)*p.radius;
-      const y = c.y + Math.sin(p.angle)*p.radius;
+/* canvas */
+const canvas=document.getElementById("bg")
+const ctx=canvas.getContext("2d")
 
-      const dx = (mouse.x - x)*0.002;
-      const dy = (mouse.y - y)*0.002;
+let w=innerWidth
+let h=innerHeight
+canvas.width=w
+canvas.height=h
 
-      ctx.beginPath();
-      ctx.fillStyle = 'rgba(22,255,106,0.7)';
-      ctx.arc(x+dx, y+dy, p.size*2.5,0,Math.PI*2);
-      ctx.fill();
+window.onresize=()=>{
+w=innerWidth
+h=innerHeight
+canvas.width=w
+canvas.height=h
+}
 
-      ctx.beginPath();
-      ctx.fillStyle = 'rgba(22,255,106,1)';
-      ctx.arc(x+dx, y+dy, p.size,0,Math.PI*2);
-      ctx.fill();
-    });
+/* stars */
+let stars=[]
+for(let i=0;i<500;i++){
+stars.push({
+x:Math.random()*w,
+y:Math.random()*h,
+z:Math.random()*2
+})
+}
 
-    requestAnimationFrame(draw);
-  }
+/* meteors */
+let meteors=[]
+setInterval(()=>{
+meteors.push({
+x:Math.random()*w,
+y:-50,
+vx:-4+Math.random()*2,
+vy:6+Math.random()*2,
+life:80
+})
+},2500)
 
-  draw();
-})();
+/* black hole */
+let parts=[]
+for(let i=0;i<500;i++){
+parts.push({
+angle:Math.random()*6.28,
+radius:Math.random()*380,
+speed:0.003+Math.random()*0.004
+})
+}
+
+/* rotating earth */
+let earthAngle=0
+
+function draw(){
+
+ctx.fillStyle="rgba(0,0,0,.3)"
+ctx.fillRect(0,0,w,h)
+
+/* stars parallax */
+stars.forEach(s=>{
+s.y+=s.z
+if(s.y>h)s.y=0
+ctx.fillStyle="white"
+ctx.fillRect(s.x,s.y,s.z,s.z)
+})
+
+/* black hole glow */
+let cx=w/2
+let cy=h/2
+
+let glow=ctx.createRadialGradient(cx,cy,10,cx,cy,350)
+glow.addColorStop(0,"rgba(0,255,150,.2)")
+glow.addColorStop(1,"transparent")
+ctx.fillStyle=glow
+ctx.fillRect(0,0,w,h)
+
+/* black hole particles */
+parts.forEach(p=>{
+p.angle+=p.speed
+p.radius*=0.998
+if(p.radius<15)p.radius=380
+
+let x=cx+Math.cos(p.angle)*p.radius
+let y=cy+Math.sin(p.angle)*p.radius
+
+ctx.fillStyle="#00ff88"
+ctx.beginPath()
+ctx.arc(x,y,2,0,6.28)
+ctx.fill()
+})
+
+/* meteors */
+meteors.forEach((m,i)=>{
+ctx.strokeStyle="#66ffcc"
+ctx.beginPath()
+ctx.moveTo(m.x,m.y)
+ctx.lineTo(m.x-m.vx*5,m.y-m.vy*5)
+ctx.stroke()
+
+m.x+=m.vx
+m.y+=m.vy
+m.life--
+if(m.life<0)meteors.splice(i,1)
+})
+
+/* rotating earth */
+earthAngle+=0.01
+let ex=cx+Math.cos(earthAngle)*420
+let ey=cy+Math.sin(earthAngle)*200
+
+ctx.fillStyle="#00ffaa"
+ctx.beginPath()
+ctx.arc(ex,ey,45,0,6.28)
+ctx.fill()
+
+/* saturn trail */
+trail.forEach((t,i)=>{
+ctx.fillStyle="rgba(0,255,150,"+(t.life/25)+")"
+ctx.beginPath()
+ctx.arc(t.x,t.y,6,0,6.28)
+ctx.fill()
+t.life--
+if(t.life<=0)trail.splice(i,1)
+})
+
+requestAnimationFrame(draw)
+}
+draw()
+
 </script>
 </body>
 </html>
